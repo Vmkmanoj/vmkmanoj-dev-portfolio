@@ -1,49 +1,148 @@
-import { motion } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { gsap } from 'gsap';
 import { ArrowDown, Download, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SplitText } from '@/components/animations/SplitText';
+import { BlurText } from '@/components/animations/BlurText';
+import { GradientText } from '@/components/animations/GradientText';
+import { Magnet } from '@/components/animations/Magnet';
+import { DecryptedText } from '@/components/animations/DecryptedText';
 
-const FloatingBlob = ({ className, delay = 0 }: { className: string; delay?: number }) => (
-  <motion.div
-    className={`absolute rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-blob ${className}`}
-    animate={{
-      x: [0, 30, -20, 0],
-      y: [0, -50, 20, 0],
-      scale: [1, 1.1, 0.9, 1],
-    }}
-    transition={{
-      duration: 7,
-      repeat: Infinity,
-      delay,
-      ease: 'easeInOut',
-    }}
-  />
-);
+// Animated particles background
+function ParticlesBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationId: number;
+    let particles: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      opacity: number;
+    }> = [];
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const createParticles = () => {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 15000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          size: Math.random() * 2 + 1,
+          opacity: Math.random() * 0.5 + 0.2,
+        });
+      }
+    };
+
+    const drawParticles = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(174, 72%, 50%, ${p.opacity})`;
+        ctx.fill();
+      });
+
+      // Draw connections
+      particles.forEach((p1, i) => {
+        particles.slice(i + 1).forEach((p2) => {
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `hsla(174, 72%, 50%, ${0.15 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        });
+      });
+
+      animationId = requestAnimationFrame(drawParticles);
+    };
+
+    resize();
+    createParticles();
+    drawParticles();
+
+    window.addEventListener('resize', () => {
+      resize();
+      createParticles();
+    });
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 pointer-events-none"
+      style={{ opacity: 0.6 }}
+    />
+  );
+}
+
+// Animated floating shapes
+function FloatingShapes() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Gradient Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl animate-blob" />
+      <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-accent/15 rounded-full filter blur-3xl animate-blob animation-delay-2000" />
+      <div className="absolute bottom-1/4 left-1/2 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-blob animation-delay-4000" />
+    </div>
+  );
+}
 
 export function HeroSection() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    // Delay content appearance for dramatic effect
+    const timer = setTimeout(() => setShowContent(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section
       id="home"
+      ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-hero"
     >
-      {/* Animated Background Blobs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <FloatingBlob
-          className="w-72 h-72 bg-primary/30 -top-20 -left-20"
-          delay={0}
-        />
-        <FloatingBlob
-          className="w-96 h-96 bg-accent/20 top-1/3 right-0"
-          delay={2}
-        />
-        <FloatingBlob
-          className="w-80 h-80 bg-primary/20 bottom-0 left-1/3"
-          delay={4}
-        />
-      </div>
+      {/* Animated Background */}
+      <ParticlesBackground />
+      <FloatingShapes />
 
-      {/* Grid Pattern Overlay */}
+      {/* Grid Pattern */}
       <div
-        className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
           backgroundSize: '40px 40px',
@@ -52,106 +151,106 @@ export function HeroSection() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Greeting */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-primary font-medium mb-4 text-sm md:text-base tracking-wider uppercase"
-          >
-            Hello, I'm
-          </motion.p>
+          {showContent && (
+            <>
+              {/* Greeting with Decrypted Effect */}
+              <div className="mb-6">
+                <span className="text-primary font-medium text-sm md:text-base tracking-wider uppercase">
+                  <DecryptedText text="Hello, I'm" speed={40} />
+                </span>
+              </div>
 
-          {/* Name */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6"
-          >
-            <span className="text-foreground">John </span>
-            <span className="text-gradient">Developer</span>
-          </motion.h1>
+              {/* Name with Split Text Animation */}
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6">
+                <SplitText
+                  text="John "
+                  className="text-foreground"
+                  delay={60}
+                  duration={0.8}
+                  ease="power3.out"
+                  from={{ opacity: 0, y: 60, rotateX: -90 }}
+                  to={{ opacity: 1, y: 0, rotateX: 0 }}
+                />
+                <GradientText
+                  colors={['#14b8a6', '#06b6d4', '#0ea5e9', '#14b8a6']}
+                  className="font-display font-bold"
+                >
+                  <SplitText
+                    text="Developer"
+                    delay={60}
+                    duration={0.8}
+                    ease="power3.out"
+                    from={{ opacity: 0, y: 60, rotateX: -90 }}
+                    to={{ opacity: 1, y: 0, rotateX: 0 }}
+                  />
+                </GradientText>
+              </h1>
 
-          {/* Tagline */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4"
-          >
-            Full-Stack Developer
-          </motion.p>
+              {/* Tagline with Blur Text */}
+              <div className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4">
+                <BlurText text="Full-Stack Developer" delay={80} duration={0.6} />
+              </div>
 
-          {/* Tech Stack */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-8"
-          >
-            {['Java', 'React', 'Node.js', 'TypeScript', 'MongoDB'].map((tech, index) => (
-              <motion.span
-                key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                className="px-3 py-1 md:px-4 md:py-1.5 bg-secondary rounded-full text-xs md:text-sm font-medium text-secondary-foreground border border-border"
+              {/* Tech Stack Pills */}
+              <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-8">
+                {['Java', 'React', 'Node.js', 'TypeScript', 'MongoDB'].map((tech, index) => (
+                  <span
+                    key={tech}
+                    className="px-3 py-1.5 md:px-4 md:py-2 bg-secondary/80 backdrop-blur-sm rounded-full text-xs md:text-sm font-medium text-secondary-foreground border border-border/50 opacity-0 animate-fade-in"
+                    style={{ animationDelay: `${800 + index * 100}ms`, animationFillMode: 'forwards' }}
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              {/* Description */}
+              <p
+                className="text-muted-foreground max-w-2xl mx-auto mb-10 text-sm md:text-base leading-relaxed opacity-0 animate-fade-in"
+                style={{ animationDelay: '1300ms', animationFillMode: 'forwards' }}
               >
-                {tech}
-              </motion.span>
-            ))}
-          </motion.div>
+                I craft elegant, scalable web applications with clean code and modern technologies.
+                Passionate about creating seamless user experiences and robust backend systems.
+              </p>
 
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-muted-foreground max-w-2xl mx-auto mb-10 text-sm md:text-base leading-relaxed"
-          >
-            I craft elegant, scalable web applications with clean code and modern technologies.
-            Passionate about creating seamless user experiences and robust backend systems.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Button variant="hero" size="lg" asChild>
-              <a href="#contact">
-                <Mail className="mr-2 h-5 w-5" />
-                Hire Me
-              </a>
-            </Button>
-            <Button variant="heroOutline" size="lg" asChild>
-              <a href="/resume.pdf" download>
-                <Download className="mr-2 h-5 w-5" />
-                Download Resume
-              </a>
-            </Button>
-          </motion.div>
+              {/* CTA Buttons with Magnet Effect */}
+              <div
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in"
+                style={{ animationDelay: '1500ms', animationFillMode: 'forwards' }}
+              >
+                <Magnet magnetStrength={0.3} padding={10}>
+                  <Button variant="hero" size="lg" asChild>
+                    <a href="#contact">
+                      <Mail className="mr-2 h-5 w-5" />
+                      Hire Me
+                    </a>
+                  </Button>
+                </Magnet>
+                <Magnet magnetStrength={0.3} padding={10}>
+                  <Button variant="heroOutline" size="lg" asChild>
+                    <a href="/resume.pdf" download>
+                      <Download className="mr-2 h-5 w-5" />
+                      Download Resume
+                    </a>
+                  </Button>
+                </Magnet>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <motion.a
+      <a
         href="#about"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors opacity-0 animate-fade-in"
+        style={{ animationDelay: '2000ms', animationFillMode: 'forwards' }}
       >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ArrowDown className="h-6 w-6" />
-        </motion.div>
-      </motion.a>
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-xs uppercase tracking-wider">Scroll</span>
+          <ArrowDown className="h-5 w-5 animate-bounce" />
+        </div>
+      </a>
     </section>
   );
 }

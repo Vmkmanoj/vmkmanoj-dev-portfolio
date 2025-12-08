@@ -1,7 +1,10 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { ExternalLink, Github, Folder } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SplitText } from '@/components/animations/SplitText';
+import { ScrollReveal } from '@/components/animations/ScrollReveal';
+import { TiltCard } from '@/components/animations/TiltCard';
+import { Magnet } from '@/components/animations/Magnet';
 
 type ProjectCategory = 'all' | 'frontend' | 'backend' | 'fullstack';
 
@@ -87,88 +90,81 @@ const filters: { label: string; value: ProjectCategory }[] = [
 ];
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
-
   return (
-    <motion.article
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="group card-glass rounded-2xl overflow-hidden"
-    >
-      {/* Image */}
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={project.image}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-60" />
-        
-        {/* Overlay Links */}
-        <div className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/60 backdrop-blur-sm">
-          {project.liveUrl && (
-            <motion.a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-3 bg-primary text-primary-foreground rounded-full shadow-lg"
-              aria-label="View live demo"
-            >
-              <ExternalLink className="h-5 w-5" />
-            </motion.a>
-          )}
-          {project.githubUrl && (
-            <motion.a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-3 bg-secondary text-secondary-foreground rounded-full shadow-lg"
-              aria-label="View source code"
-            >
-              <Github className="h-5 w-5" />
-            </motion.a>
-          )}
-        </div>
-      </div>
+    <ScrollReveal direction="up" delay={index * 0.1}>
+      <TiltCard className="h-full" maxTilt={8}>
+        <article className="group card-glass rounded-2xl overflow-hidden h-full flex flex-col">
+          {/* Image */}
+          <div className="relative h-48 overflow-hidden">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
+            
+            {/* Overlay Links */}
+            <div className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-background/70 backdrop-blur-sm">
+              {project.liveUrl && (
+                <Magnet magnetStrength={0.5} padding={5}>
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:scale-110 transition-transform"
+                    aria-label="View live demo"
+                  >
+                    <ExternalLink className="h-5 w-5" />
+                  </a>
+                </Magnet>
+              )}
+              {project.githubUrl && (
+                <Magnet magnetStrength={0.5} padding={5}>
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-secondary text-secondary-foreground rounded-full shadow-lg hover:scale-110 transition-transform"
+                    aria-label="View source code"
+                  >
+                    <Github className="h-5 w-5" />
+                  </a>
+                </Magnet>
+              )}
+            </div>
+          </div>
 
-      {/* Content */}
-      <div className="p-6">
-        <div className="flex items-start gap-3 mb-3">
-          <Folder className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-          <h3 className="text-lg font-display font-semibold text-foreground group-hover:text-primary transition-colors">
-            {project.title}
-          </h3>
-        </div>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-          {project.description}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 bg-secondary/50 rounded text-xs font-medium text-muted-foreground"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.article>
+          {/* Content */}
+          <div className="p-6 flex-1 flex flex-col">
+            <div className="flex items-start gap-3 mb-3">
+              <Folder className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+              <h3 className="text-lg font-display font-semibold text-foreground group-hover:text-primary transition-colors">
+                {project.title}
+              </h3>
+            </div>
+            <p className="text-muted-foreground text-sm mb-4 line-clamp-2 flex-1">
+              {project.description}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-1 bg-secondary/50 rounded text-xs font-medium text-muted-foreground"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </article>
+      </TiltCard>
+    </ScrollReveal>
   );
 }
 
 export function ProjectsSection() {
   const [filter, setFilter] = useState<ProjectCategory>('all');
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   const filteredProjects = projects.filter(
     (project) => filter === 'all' || project.category === filter
@@ -177,50 +173,44 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="py-20 md:py-32 bg-secondary/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="section-heading mb-4">
-            Featured <span className="text-gradient">Projects</span>
-          </h2>
-          <p className="section-subheading mx-auto">
-            A selection of my recent work and personal projects
-          </p>
-        </motion.div>
+        <ScrollReveal>
+          <div className="text-center mb-12">
+            <h2 className="section-heading mb-4">
+              <SplitText text="Featured " className="text-foreground" delay={50} />
+              <span className="text-gradient">
+                <SplitText text="Projects" delay={50} />
+              </span>
+            </h2>
+            <p className="section-subheading mx-auto">
+              A selection of my recent work and personal projects
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
-        >
-          {filters.map((item) => (
-            <Button
-              key={item.value}
-              variant={filter === item.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter(item.value)}
-              className="rounded-full"
-            >
-              {item.label}
-            </Button>
-          ))}
-        </motion.div>
+        <ScrollReveal delay={0.2}>
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {filters.map((item) => (
+              <Magnet key={item.value} magnetStrength={0.2} padding={5}>
+                <Button
+                  variant={filter === item.value ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFilter(item.value)}
+                  className="rounded-full"
+                >
+                  {item.label}
+                </Button>
+              </Magnet>
+            ))}
+          </div>
+        </ScrollReveal>
 
         {/* Projects Grid */}
-        <motion.div
-          layout
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
