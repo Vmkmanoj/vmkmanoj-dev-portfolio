@@ -10,7 +10,6 @@ const skills = [
   { name: 'Backend Development', level: 90, icon: Server },
   { name: 'Database Design', level: 85, icon: Database },
   { name: 'Cloud & DevOps', level: 80, icon: Cloud },
-  { name: 'Mobile Development', level: 75, icon: Smartphone },
   { name: 'Version Control', level: 95, icon: GitBranch },
 ];
 
@@ -25,8 +24,6 @@ const techStack = [
   { name: 'Spring Boot', category: 'Backend' },
   { name: 'MongoDB', category: 'Database' },
   { name: 'PostgreSQL', category: 'Database' },
-  { name: 'Redis', category: 'Database' },
-  { name: 'Docker', category: 'DevOps' },
   { name: 'AWS', category: 'DevOps' },
   { name: 'Git', category: 'Tools' },
 ];
@@ -43,19 +40,9 @@ function AnimatedSkillBar({ skill, index }: { skill: typeof skills[0]; index: nu
             <span className="text-sm font-medium text-foreground">{skill.name}</span>
           </div>
           <span className="text-sm font-display font-semibold text-primary">
-            <CountUp end={skill.level} duration={1.5} suffix="%" />
           </span>
         </div>
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-primary rounded-full origin-left animate-[scaleX_1s_ease-out_forwards]"
-            style={{
-              width: `${skill.level}%`,
-              animationDelay: `${0.3 + index * 0.1}s`,
-              transform: 'scaleX(0)',
-            }}
-          />
-        </div>
+
       </div>
     </ScrollReveal>
   );
@@ -98,17 +85,18 @@ export function AboutSection() {
                 </h3>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    With over 5 years of experience in software development, I've had the privilege
-                    of working on diverse projects ranging from startups to enterprise applications.
+                    With a strong foundation in full-stack development and hands-on experience across real-world projects, I’ve built scalable and user-centric applications for both startups and enterprise teams.
                   </p>
                   <p>
-                    I specialize in building scalable web applications using modern technologies
-                    like React, Node.js, and cloud services. My passion lies in creating elegant
-                    solutions that solve real-world problems.
+                    I specialize in developing B2B and B2C platforms, including Interview-as-a-Service (IaaS) solutions where I’ve contributed to features like dashboards, interview copilots, filtering systems, candidate identification displays, and workflow enhancements. I’ve also worked on building intelligent chatbots using modern frameworks and AI integrations
                   </p>
                   <p>
-                    When I'm not coding, you'll find me exploring new technologies, contributing
-                    to open-source projects, or sharing knowledge through technical writing.
+                    My technical expertise spans React, Next.js, Node.js, Flask, PostgreSQL, and cloud technologies, enabling me to deliver robust frontend experiences and efficient backend architectures. Over the years, I've developed various products including e-commerce platforms, student management systems, placement training applications, and greenhouse gas emission tracking tools.
+                  </p>
+                  <p>
+                    I’m passionate about creating elegant solutions that solve real problems—whether it's designing intuitive UI/UX, optimizing performance, integrating AI-driven features, or improving data flows across systems.
+                  </p>
+                  <p>When I’m not coding, I enjoy exploring new technologies, experimenting with AI tools, contributing to open-source concepts, and sharing knowledge through mentorship and technical discussions. I’m passionate about creating elegant solutions that solve real problems—whether it's designing intuitive UI/UX, optimizing performance, integrating AI-driven features, or improving data flows across systems.
                   </p>
                 </div>
               </TiltCard>

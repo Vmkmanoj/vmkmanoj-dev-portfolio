@@ -6,20 +6,20 @@ import { SplitText } from '@/components/animations/SplitText';
 import { ScrollReveal } from '@/components/animations/ScrollReveal';
 import { TiltCard } from '@/components/animations/TiltCard';
 import { Magnet } from '@/components/animations/Magnet';
+import emailjs from '@emailjs/browser';
 
 const contactInfo = [
-  { icon: Mail, label: 'Email', value: 'john@developer.com', href: 'mailto:john@developer.com' },
-  { icon: Phone, label: 'Phone', value: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-  { icon: MapPin, label: 'Location', value: 'San Francisco, CA', href: '#' },
+  { icon: Mail, label: 'Email', value: 'vmkmano13@gmail.com', href: 'mailto:vmkmano13@gmail.com' },
+  { icon: MapPin, label: 'Location', value: 'Chennai', href: '#' },
 ];
 
 const socialLinks = [
-  { icon: Github, label: 'GitHub', href: 'https://github.com' },
-  { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com' },
-  { icon: Twitter, label: 'Twitter', href: 'https://twitter.com' },
+  { icon: Github, label: 'GitHub', href: 'https://github.com/Vmkmanoj' },
+  { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/manojkumar-v-680683298?utm_source=share_via&utm_content=profile&utm_medium=member_android' },
 ];
 
 export function ContactSection() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -28,24 +28,38 @@ export function ContactSection() {
     message: '',
   });
 
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
+const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  emailjs
+    .sendForm(
+      "service_9hlx3sj",
+      "template_kzcqf9o",
+      formRef.current!,
+      "CqfGWMMGUdafG330w"
+    )
+    .then(
+      () => {
+        toast.success("Message sent!");
+        setIsSubmitting(false);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      },
+      () => {
+        toast.error("Something went wrong.");
+        setIsSubmitting(false);
+      }
+    );
+};
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast.success('Message sent successfully! I\'ll get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setIsSubmitting(false);
-  };
 
   return (
     <section id="contact" className="py-20 md:py-32 bg-background">
@@ -100,21 +114,24 @@ export function ContactSection() {
                 <h3 className="text-xl font-display font-semibold mb-6 text-foreground">
                   Follow Me
                 </h3>
-                <div className="flex gap-4">
-                  {socialLinks.map((social) => (
-                    <Magnet key={social.label} magnetStrength={0.4} padding={5}>
-                      <a
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-4 bg-secondary hover:bg-primary hover:text-primary-foreground rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-lg"
-                        aria-label={social.label}
-                      >
-                        <social.icon className="h-6 w-6" />
-                      </a>
-                    </Magnet>
-                  ))}
-                </div>
+                <div className="flex gap-4 overflow-visible">
+  {socialLinks.map((social) => (
+    <Magnet key={social.label} magnetStrength={0.4} padding={5}>
+      <a
+        href={social.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-4 bg-secondary hover:bg-primary hover:text-primary-foreground
+                   rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-lg
+                   flex items-center justify-center overflow-visible"
+        aria-label={social.label}
+      >
+        <social.icon className="h-5 w-5 text-foreground" />
+      </a>
+    </Magnet>
+  ))}
+</div>
+
               </TiltCard>
             </ScrollReveal>
           </div>
@@ -122,7 +139,7 @@ export function ContactSection() {
           {/* Contact Form */}
           <ScrollReveal direction="right">
             <TiltCard className="card-glass rounded-2xl p-6 md:p-8" maxTilt={3}>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="group">
                     <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">

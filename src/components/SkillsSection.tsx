@@ -43,15 +43,6 @@ const skillCategories: SkillCategory[] = [
       { name: 'MySQL', level: 80, color: 'hsl(198, 100%, 35%)' },
     ],
   },
-  {
-    title: 'DevOps',
-    skills: [
-      { name: 'Docker', level: 82, color: 'hsl(207, 77%, 54%)' },
-      { name: 'AWS', level: 75, color: 'hsl(29, 100%, 50%)' },
-      { name: 'CI/CD', level: 80, color: 'hsl(174, 72%, 40%)' },
-      { name: 'Git', level: 95, color: 'hsl(10, 75%, 50%)' },
-    ],
-  },
 ];
 
 function AnimatedCircularProgress({ skill, index }: { skill: Skill; index: number }) {
@@ -153,7 +144,7 @@ export function SkillsSection() {
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex justify-center grid md:grid-cols-2 lg:grid-cols-4 gap-8" style={{display:"flex",justifyContent:"center"}}>
           {skillCategories.map((category, categoryIndex) => (
             <ScrollReveal
               key={category.title}

@@ -163,14 +163,14 @@ export function HeroSection() {
               {/* Name with Split Text Animation */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6">
                 <SplitText
-                  text="John "
+                  text="Manojkumar "
                   className="text-foreground"
                   delay={60}
                   duration={0.8}
                   ease="power3.out"
                   from={{ opacity: 0, y: 60, rotateX: -90 }}
                   to={{ opacity: 1, y: 0, rotateX: 0 }}
-                />
+                /> 
                 <GradientText
                   colors={['#14b8a6', '#06b6d4', '#0ea5e9', '#14b8a6']}
                   className="font-display font-bold"
@@ -193,7 +193,7 @@ export function HeroSection() {
 
               {/* Tech Stack Pills */}
               <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-8">
-                {['Java', 'React', 'Node.js', 'TypeScript', 'MongoDB'].map((tech, index) => (
+                {['Java', 'React', 'Node.js', 'TypeScript', 'MongoDB','Sql'].map((tech, index) => (
                   <span
                     key={tech}
                     className="px-3 py-1.5 md:px-4 md:py-2 bg-secondary/80 backdrop-blur-sm rounded-full text-xs md:text-sm font-medium text-secondary-foreground border border-border/50 opacity-0 animate-fade-in"
@@ -228,7 +228,7 @@ export function HeroSection() {
                 </Magnet>
                 <Magnet magnetStrength={0.3} padding={10}>
                   <Button variant="heroOutline" size="lg" asChild>
-                    <a href="/resume.pdf" download>
+                    <a href="/Manojkumar.pdf" download="../Manojkumar_Resume.pdf">
                       <Download className="mr-2 h-5 w-5" />
                       Download Resume
                     </a>
