@@ -17,7 +17,7 @@ export function Footer() {
             transition={{ duration: 0.5 }}
             className="text-sm text-muted-foreground flex items-center gap-1"
           >
-            © {new Date().getFullYear()} John Developer. Made with
+            © {new Date().getFullYear()} Manojkumar Developer. Made with
             <Heart className="h-4 w-4 text-primary fill-primary" />
             and lots of ☕
           </motion.p>
